@@ -56,25 +56,6 @@ export class ArticleBean {
 }
 
 class ArticleViewModel {
-  /**
-   * Get news type list from server.
-   *
-   * @return NewsTypeBean[] newsTypeList
-   */
-  getNewsTypeList(): Promise<ArticleBean[]> {
-    return new Promise((resolve: Function) => {
-      let url = `${Const.SERVER}/${Const.GET_NEWS_TYPE}`;
-      httpRequestGet(url).then((data: ResponseResult) => {
-        if (data.errorCode === Const.SERVER_CODE_SUCCESS) {
-          resolve(data.data);
-        } else {
-          resolve([]);
-        }
-      }).catch(() => {
-        resolve([]);
-      });
-    });
-  }
 
   getBannerList(): Promise<Banner[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
@@ -93,11 +74,6 @@ class ArticleViewModel {
     });
   }
 
-  /**
-   * Get news type list from server.
-   *
-   * @return NewsData[] newsDataList
-   */
   getArticleList(currentPage: number, pageSize: number, path: string): Promise<ArticleBean[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${path}`;

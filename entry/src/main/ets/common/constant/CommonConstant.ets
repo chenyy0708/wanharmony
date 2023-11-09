@@ -15,30 +15,9 @@
 
 
 export class CommonConstant {
-
-  /**
-   * The host address of the server.
-   */
   static readonly SERVER: string = 'https://www.wanandroid.com';
-
-  /**
-   * Get the news type.
-   */
-  static readonly GET_NEWS_TYPE: string = 'news/getNewsType';
-
-  /**
-   * Get the news list.
-   */
   static readonly GET_ARTICLE_LIST: string = 'article/list';
-
-  /**
-   * Get the news list.
-   */
   static readonly GET_TOP_ARTICLE_LIST: string = 'article/top/json';
-
-  /**
-   * Get the news list.
-   */
   static readonly GET_BANNER_LIST: string = 'banner/json';
 
   /**
