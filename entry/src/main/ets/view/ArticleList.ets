@@ -15,20 +15,20 @@
 
 import promptAction from '@ohos.promptAction';
 import { CommonConstant, CommonConstant as Const, PageState } from '../common/constant/CommonConstant';
-import NewsItem from './NewsItem';
+import ArticleItem from './ArticleItem';
 import LoadMoreLayout from './LoadMoreLayout';
 import RefreshLayout from './RefreshLayout';
 import CustomRefreshLoadLayout from './CustomRefreshLoadLayout';
 import { listTouchEvent } from '../common/utils/PullDownRefresh';
-import NewsViewModel, { ArticleBean, Banner, CustomRefreshLoadLayoutClass } from '../viewmodel/NewsViewModel';
+import NewsViewModel, { ArticleBean, Banner, CustomRefreshLoadLayoutClass } from '../viewmodel/ArticleViewModel';
 import NoMoreLayout from './NoMoreLayout';
-import ArticleModel from '../viewmodel/NewsModel';
+import ArticleModel from '../viewmodel/ArticleModel';
 
 /**
  * The news list component.
  */
 @Component
-export default struct NewsList {
+export default struct ArticleList {
   @State articleModel: ArticleModel = new ArticleModel();
   @Watch('changeCategory') @Link currentIndex: number;
 
@@ -126,14 +126,14 @@ export default struct NewsList {
 
       ForEach(this.articleModel.topData, (item: ArticleBean) => {
         ListItem() {
-          NewsItem({ articleBean: item, isTop : true })
+          ArticleItem({ articleBean: item, isTop : true })
         }
         .backgroundColor($r('app.color.white'))
         .width('100%')
       }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
       ForEach(this.articleModel.articleData, (item: ArticleBean) => {
         ListItem() {
-          NewsItem({ articleBean: item })
+          ArticleItem({ articleBean: item })
         }
         .backgroundColor($r('app.color.white'))
         .width('100%')

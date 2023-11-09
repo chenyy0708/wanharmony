@@ -12,16 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import router from '@ohos.router';
 
-import { CommonConstant, CommonConstant as Const } from '../common/constant/CommonConstant';
-import { ArticleBean, NewsData, NewsFile } from '../viewmodel/NewsViewModel';
+import { CommonConstant as Const } from '../common/constant/CommonConstant';
+import { ArticleBean } from '../viewmodel/ArticleViewModel';
 
 /**
  * The news list item component.
  */
 @Component
 @Preview
-export default struct NewsItem {
+export default struct ArticleItem {
   private articleBean: ArticleBean = new ArticleBean();
   private isTop : boolean = false;
 
@@ -53,7 +54,9 @@ export default struct NewsItem {
         Text(this.articleBean.superChapterName || '').fontSize(11).fontColor('#666666')
         Blank()
       }.width(Const.FULL_WIDTH)
-    }.padding(10)
+    }.padding(10).onClick(()=>{
+      router.pushUrl({url : 'pages/WebPage' , params : { url : this.articleBean.link , title : this.articleBean.title }})
+    })
 
   }
 }

@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import NewsList from '../view/newslist';
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import MainViewModel, { TabBean } from '../viewmodel/MainViewModel';
+import ArticleList from './ArticleList';
 
 /**
  * The tabBar component.
@@ -46,7 +46,7 @@ export default struct TabBar {
         TabContent() {
           Column() {
             if (index === 0) {
-              NewsList({ currentIndex: $currentIndex })
+              ArticleList({ currentIndex: $currentIndex })
             } else {
               Text(tabsItem.name)
             }

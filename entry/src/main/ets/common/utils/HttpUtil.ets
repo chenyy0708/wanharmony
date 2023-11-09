@@ -14,7 +14,7 @@
  */
 
 import http from '@ohos.net.http';
-import { ResponseResult } from '../../viewmodel/NewsViewModel';
+import { ResponseResult } from '../../viewmodel/ArticleViewModel';
 import { CommonConstant as Const, ContentType } from '../constant/CommonConstant';
 
 /**

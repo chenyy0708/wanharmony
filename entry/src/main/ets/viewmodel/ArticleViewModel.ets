@@ -55,7 +55,7 @@ export class ArticleBean {
   zan?: number;
 }
 
-class NewsViewModel {
+class ArticleViewModel {
   /**
    * Get news type list from server.
    *
@@ -74,15 +74,6 @@ class NewsViewModel {
         resolve([]);
       });
     });
-  }
-
-  /**
-   * Get default news type list.
-   *
-   * @return NewsTypeBean[] newsTypeList
-   */
-  getDefaultTypeList(): NewsTypeBean[] {
-    return Const.TabBars_DEFAULT_NEWS_TYPES;
   }
 
   getBannerList(): Promise<Banner[]> {
@@ -143,59 +134,10 @@ class NewsViewModel {
   }
 }
 
-let newsViewModel = new NewsViewModel();
+let articleViewModel = new ArticleViewModel();
 
-export default newsViewModel as NewsViewModel;
+export default articleViewModel as ArticleViewModel;
 
-/**
- * News list item info.
- */
-export class NewsData {
-  /**
-   * News list item title.
-   */
-  title: string = '';
-
-  /**
-   * News list item content.
-   */
-  content: string = '';
-
-  /**
-   * News list item imagesUrl.
-   */
-  imagesUrl: Array<NewsFile> = [new NewsFile()];
-
-  /**
-   * News list item source.
-   */
-  source: string = '';
-}
-
-/**
- * News image list item info.
- */
-export class NewsFile {
-  /**
-   * News image list item id.
-   */
-  id: number = 0;
-
-  /**
-   * News image list item url.
-   */
-  url: string = '';
-
-  /**
-   * News image list item type.
-   */
-  type: number = 0;
-
-  /**
-   * News image list item newsId.
-   */
-  newsId: number = 0;
-}
 
 /**
  * Custom refresh load layout data.
@@ -230,25 +172,10 @@ export class CustomRefreshLoadLayoutClass {
   }
 }
 
-export class NewsTypeBean {
-  id: number = 0;
-  name: ResourceStr = '';
-}
 
 export class ResponseResult {
-  /**
-   * Code returned by the network request: success, fail.
-   */
   errorCode: number;
-
-  /**
-   * Message returned by the network request.
-   */
   errorMsg: string | Resource;
-
-  /**
-   * Data returned by the network request.
-   */
   data: any | undefined;
 
   constructor() {

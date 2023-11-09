@@ -15,8 +15,8 @@
 
 import promptAction from '@ohos.promptAction';
 import { CommonConstant as Const } from '../constant/CommonConstant';
-import NewsViewModel, { NewsData } from '../../viewmodel/NewsViewModel';
-import ArticleModel from '../../viewmodel/NewsModel';
+import NewsViewModel, { ArticleBean } from '../../viewmodel/ArticleViewModel';
+import ArticleModel from '../../viewmodel/ArticleModel';
 
 export function touchMoveLoadMore(newsModel: ArticleModel, event: TouchEvent) {
   if (newsModel.endIndex === newsModel.articleData.length - 1 || newsModel.endIndex === newsModel.articleData.length) {
@@ -40,7 +40,7 @@ export function touchUpLoadMore(newsModel: ArticleModel) {
     self.isLoading = true;
     setTimeout(() => {
       closeLoadMore(newsModel);
-      NewsViewModel.getArticleList(self.currentPage, self.pageSize, Const.GET_ARTICLE_LIST).then((data: NewsData[]) => {
+      NewsViewModel.getArticleList(self.currentPage, self.pageSize, Const.GET_ARTICLE_LIST).then((data: ArticleBean[]) => {
         if (data.length === self.pageSize) {
           self.currentPage++;
           self.hasMore = true;

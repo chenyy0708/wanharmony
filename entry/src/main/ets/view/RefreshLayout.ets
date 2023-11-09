@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { CustomRefreshLoadLayoutClass } from '../viewmodel/NewsViewModel';
+import { CustomRefreshLoadLayoutClass } from '../viewmodel/ArticleViewModel';
 import CustomRefreshLoadLayout from './CustomRefreshLoadLayout';
 
 /**

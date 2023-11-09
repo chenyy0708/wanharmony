@@ -14,7 +14,8 @@
  */
 
 import { CommonConstant as Const, PageState } from '../common/constant/CommonConstant';
-import { ArticleBean, Banner, NewsData } from './NewsViewModel';
+
+import { ArticleBean, Banner } from './ArticleViewModel';
 
 export default class ArticleModel {
   topData: Array<ArticleBean> = [];

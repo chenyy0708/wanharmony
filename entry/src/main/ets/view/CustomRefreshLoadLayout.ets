@@ -14,7 +14,7 @@
  */
 
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
-import { CustomRefreshLoadLayoutClass } from '../viewmodel/NewsViewModel';
+import { CustomRefreshLoadLayoutClass } from '../viewmodel/ArticleViewModel';
 
 /**
  * Custom layout to show refresh or load.

@@ -15,12 +15,9 @@
 
 import promptAction from '@ohos.promptAction';
 import { touchMoveLoadMore, touchUpLoadMore } from './PullUpLoadMore';
-import {
-  CommonConstant as Const,
-  RefreshState
-} from '../constant/CommonConstant';
-import NewsViewModel, { NewsData } from '../../viewmodel/NewsViewModel';
-import ArticleModel from '../../viewmodel/NewsModel';
+import { CommonConstant as Const, RefreshState } from '../constant/CommonConstant';
+import NewsViewModel, { ArticleBean } from '../../viewmodel/ArticleViewModel';
+import ArticleModel from '../../viewmodel/ArticleModel';
 
 export function listTouchEvent(newsModel: ArticleModel, event: TouchEvent) {
   switch (event.type) {
@@ -33,8 +30,7 @@ export function listTouchEvent(newsModel: ArticleModel, event: TouchEvent) {
         return;
       }
       let isDownPull = event.touches[0].y - newsModel.lastMoveY > 0;
-      if (((isDownPull === true) || (newsModel.isPullRefreshOperation === true)) && (newsModel.isCanLoadMore === false))
-      {
+      if (((isDownPull === true) || (newsModel.isPullRefreshOperation === true)) && (newsModel.isCanLoadMore === false)) {
         // Finger movement, processing pull-down refresh.
         touchMovePullRefresh(newsModel, event);
       } else {
@@ -89,7 +85,7 @@ export function touchUpPullRefresh(newsModel: ArticleModel) {
     setTimeout(() => {
       let self: ArticleModel = newsModel;
       NewsViewModel.getArticleList(newsModel.currentPage, newsModel.pageSize, Const.GET_ARTICLE_LIST).then((data:
-        NewsData[]) => {
+        ArticleBean[]) => {
         if (data.length === newsModel.pageSize) {
           self.hasMore = true;
           self.currentPage++;

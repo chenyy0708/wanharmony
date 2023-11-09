@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import { NewsTypeBean } from '../../viewmodel/NewsViewModel';
 
 export class CommonConstant {
 
@@ -55,7 +54,7 @@ export class CommonConstant {
   /**
    * The page size.
    */
-  static readonly PAGE_SIZE: number = 4;
+  static readonly PAGE_SIZE: number = 40;
 
   /**
    * The refresh and load height.
@@ -107,16 +106,6 @@ export class CommonConstant {
   static readonly TabBars_BAR_HEIGHT: string = '7.2%';
   static readonly TabBars_HORIZONTAL_PADDING: string  = '2.2%';
   static readonly TabBars_BAR_WIDTH: string = '100%';
-  static readonly TabBars_DEFAULT_NEWS_TYPES: Array<NewsTypeBean> = [
-    { id: 0, name: '全部' },
-    { id: 1, name: '国内' },
-    { id: 2, name: '国际' },
-    { id: 3, name: '娱乐' },
-    { id: 4, name: '军事' },
-    { id: 5, name: '体育' },
-    { id: 6, name: '科技' },
-    { id: 7, name: '财经' }
-  ];
 
   /**
    * The NewsListConstant constants.
