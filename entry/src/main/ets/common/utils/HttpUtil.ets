@@ -41,17 +41,17 @@ export function httpRequestGet(url: string): Promise<ResponseResult> {
       // Obtains the returned data.
       let result = `${value.result}`;
       let resultJson: ResponseResult = JSON.parse(result);
-      if (resultJson.code === Const.SERVER_CODE_SUCCESS) {
+      if (resultJson.errorCode === Const.SERVER_CODE_SUCCESS) {
         serverData.data = resultJson.data;
       }
-      serverData.code = resultJson.code;
-      serverData.msg = resultJson.msg;
+      serverData.errorCode = resultJson.errorCode;
+      serverData.errorMsg = resultJson.errorMsg;
     } else {
-      serverData.msg = `${$r('app.string.http_error_message')}&${value.responseCode}`;
+      serverData.errorMsg = `${$r('app.string.http_error_message')}&${value.responseCode}`;
     }
     return serverData;
   }).catch(() => {
-    serverData.msg = $r('app.string.http_error_message');
+    serverData.errorMsg = $r('app.string.http_error_message');
     return serverData;
   })
 }

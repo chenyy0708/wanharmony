@@ -40,7 +40,7 @@ export function touchUpLoadMore(newsModel: NewsModel) {
     self.isLoading = true;
     setTimeout(() => {
       closeLoadMore(newsModel);
-      NewsViewModel.getNewsList(self.currentPage, self.pageSize, Const.GET_NEWS_LIST).then((data: NewsData[]) => {
+      NewsViewModel.getNewsList(self.currentPage, self.pageSize, Const.GET_ARTICLE_LIST).then((data: NewsData[]) => {
         if (data.length === self.pageSize) {
           self.currentPage++;
           self.hasMore = true;

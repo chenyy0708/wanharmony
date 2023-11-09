@@ -15,51 +15,51 @@
 
 import NewsList from '../view/newslist';
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
-import NewsViewModel, { NewsTypeBean } from '../viewmodel/NewsViewModel';
+import MainViewModel, { TabBean } from '../viewmodel/MainViewModel';
 
 /**
  * The tabBar component.
  */
 @Component
+@Preview
 export default struct TabBar {
-  @State tabBarArray: NewsTypeBean[] = NewsViewModel.getDefaultTypeList();
+  @State tabBarArray: TabBean[] = MainViewModel.getTabList();
   @State currentIndex: number = 0;
   @State currentPage: number = 1;
 
-  @Builder TabBuilder(index: number) {
+  @Builder TabBuilder(index: number, tabBean: TabBean) {
     Column() {
       Text(this.tabBarArray[index].name)
-        .height(Const.FULL_HEIGHT)
-        .padding({ left: Const.TabBars_HORIZONTAL_PADDING, right: Const.TabBars_HORIZONTAL_PADDING })
-        .fontSize(this.currentIndex === index ? Const.TabBars_SELECT_TEXT_FONT_SIZE : Const.TabBars_UN_SELECT_TEXT_FONT_SIZE)
         .fontWeight(this.currentIndex === index ? Const.TabBars_SELECT_TEXT_FONT_WEIGHT : Const.TabBars_UN_SELECT_TEXT_FONT_WEIGHT)
-        .fontColor($r('app.color.fontColor_text3'))
+        .fontSize(14)
+        .fontColor($r('app.color.fontColor_text3')).margin({ bottom: 2 })
+      Image(tabBean.icon).height(20).width(20)
     }
   }
 
   aboutToAppear() {
-    // Request news category.
-    NewsViewModel.getNewsTypeList().then((typeList: NewsTypeBean[]) => {
-      this.tabBarArray = typeList;
-    }).catch((typeList: NewsTypeBean[]) => {
-      this.tabBarArray = typeList;
-    });
   }
 
   build() {
     Tabs() {
-      ForEach(this.tabBarArray, (tabsItem: NewsTypeBean) => {
+      ForEach(this.tabBarArray, (tabsItem: TabBean, index) => {
         TabContent() {
           Column() {
-            NewsList({ currentIndex: $currentIndex })
+            if (index === 0) {
+              NewsList({ currentIndex: $currentIndex })
+            } else {
+              Text(tabsItem.name)
+            }
           }
         }
-        .tabBar(this.TabBuilder(tabsItem.id))
-      }, (item: NewsTypeBean) => JSON.stringify(item));
+        .tabBar(this.TabBuilder(index, tabsItem))
+      }, (item: TabBean) => JSON.stringify(item));
     }
-    .barHeight(Const.TabBars_BAR_HEIGHT)
-    .barMode(BarMode.Scrollable)
+    .barHeight(50)
+    .barPosition(BarPosition.End)
+    .barMode(BarMode.Fixed)
     .barWidth(Const.TabBars_BAR_WIDTH)
+    .backgroundColor($r('app.color.white'))
     .onChange((index: number) => {
       this.currentIndex = index;
       this.currentPage = 1;

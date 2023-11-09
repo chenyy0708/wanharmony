@@ -20,7 +20,7 @@ import LoadMoreLayout from './LoadMoreLayout';
 import RefreshLayout from './RefreshLayout';
 import CustomRefreshLoadLayout from './CustomRefreshLoadLayout';
 import { listTouchEvent } from '../common/utils/PullDownRefresh';
-import NewsViewModel, { CustomRefreshLoadLayoutClass, NewsData } from '../viewmodel/NewsViewModel';
+import NewsViewModel, { ArticleBean, CustomRefreshLoadLayoutClass, NewsData } from '../viewmodel/NewsViewModel';
 import NoMoreLayout from './NoMoreLayout';
 import NewsModel from '../viewmodel/NewsModel';
 
@@ -34,15 +34,11 @@ export default struct NewsList {
 
   changeCategory() {
     this.newsModel.currentPage = 1;
-    NewsViewModel.getNewsList(this.newsModel.currentPage, this.newsModel.pageSize, Const.GET_NEWS_LIST)
-      .then((data: NewsData[]) => {
+    NewsViewModel.getNewsList(this.newsModel.currentPage, this.newsModel.pageSize, Const.GET_ARTICLE_LIST)
+      .then((data: ArticleBean[]) => {
         this.newsModel.pageState = PageState.Success;
-        if (data.length === this.newsModel.pageSize) {
-          this.newsModel.currentPage++;
-          this.newsModel.hasMore = true;
-        } else {
-          this.newsModel.hasMore = false;
-        }
+        this.newsModel.currentPage++;
+        this.newsModel.hasMore = true;
         this.newsModel.newsData = data;
       })
       .catch((err: string | Resource) => {
@@ -95,14 +91,12 @@ export default struct NewsList {
         })
       }
 
-      ForEach(this.newsModel.newsData, (item: NewsData) => {
+      ForEach(this.newsModel.newsData, (item: ArticleBean) => {
         ListItem() {
-          NewsItem({ newsData: item })
+          NewsItem({ articleBean: item })
         }
-        .height($r('app.float.news_list_height'))
         .backgroundColor($r('app.color.white'))
-        .margin({ top: $r('app.float.news_list_margin_top') })
-        .borderRadius(Const.NewsListConstant_ITEM_BORDER_RADIUS)
+        .width('100%')
       }, (item: NewsData, index?: number) => JSON.stringify(item) + index)
 
       ListItem() {
@@ -116,10 +110,8 @@ export default struct NewsList {
         }
       }
     }
-    .width(Const.NewsListConstant_LIST_WIDTH)
+    .width('100%')
     .height(Const.FULL_HEIGHT)
-    .margin({ left: Const.NewsListConstant_LIST_MARGIN_LEFT, right: Const.NewsListConstant_LIST_MARGIN_RIGHT })
-    .backgroundColor($r('app.color.listColor'))
     .divider({
       color: $r('app.color.dividerColor'),
       strokeWidth: Const.NewsListConstant_LIST_DIVIDER_STROKE_WIDTH,

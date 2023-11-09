@@ -88,7 +88,7 @@ export function touchUpPullRefresh(newsModel: NewsModel) {
     newsModel.currentPage = 1;
     setTimeout(() => {
       let self: NewsModel = newsModel;
-      NewsViewModel.getNewsList(newsModel.currentPage, newsModel.pageSize, Const.GET_NEWS_LIST).then((data:
+      NewsViewModel.getNewsList(newsModel.currentPage, newsModel.pageSize, Const.GET_ARTICLE_LIST).then((data:
         NewsData[]) => {
         if (data.length === newsModel.pageSize) {
           self.hasMore = true;

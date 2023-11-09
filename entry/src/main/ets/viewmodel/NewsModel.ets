@@ -14,10 +14,10 @@
  */
 
 import { CommonConstant as Const, PageState } from '../common/constant/CommonConstant';
-import { NewsData } from './NewsViewModel';
+import { ArticleBean, NewsData } from './NewsViewModel';
 
 export default class NewsModel {
-  newsData: Array<NewsData> = [];
+  newsData: Array<ArticleBean> = [];
   currentPage: number = 1;
   pageSize: number = Const.PAGE_SIZE;
   pullDownRefreshText: Resource = $r('app.string.pull_down_refresh_text');

@@ -17,23 +17,61 @@ import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import { httpRequestGet } from '../common/utils/HttpUtil';
 import Logger from '../common/utils/Logger';
 
+export class  ArticleBean {
+  adminAdd?: boolean;
+  apkLink?: string;
+  audit?: number;
+  author?: string;
+  canEdit?: boolean;
+  chapterId?: number;
+  chapterName?: string;
+  collect?: boolean;
+  courseId?: number;
+  desc?: string;
+  descMd?: string;
+  envelopePic?: string;
+  fresh?: boolean;
+  host?: string;
+  id?: number;
+  isAdminAdd?: boolean;
+  link?: string;
+  niceDate?: string;
+  niceShareDate?: string;
+  origin?: string;
+  prefix?: string;
+  projectLink?: string;
+  publishTime?: number;
+  realSuperChapterId?: number;
+  selfVisible?: number;
+  shareDate?: number;
+  shareUser?: string;
+  superChapterId?: number;
+  superChapterName?: string;
+  tags?: any[];
+  title?: string;
+  type?: number;
+  userId?: number;
+  visible?: number;
+  zan?: number;
+}
+
 class NewsViewModel {
   /**
    * Get news type list from server.
    *
    * @return NewsTypeBean[] newsTypeList
    */
-  getNewsTypeList(): Promise<NewsTypeBean[]> {
+  getNewsTypeList(): Promise<ArticleBean[]> {
     return new Promise((resolve: Function) => {
       let url = `${Const.SERVER}/${Const.GET_NEWS_TYPE}`;
       httpRequestGet(url).then((data: ResponseResult) => {
-        if (data.code === Const.SERVER_CODE_SUCCESS) {
+        if (data.errorCode === Const.SERVER_CODE_SUCCESS) {
           resolve(data.data);
         } else {
-          resolve(Const.TabBars_DEFAULT_NEWS_TYPES);
+          resolve([]);
         }
       }).catch(() => {
-        resolve(Const.TabBars_DEFAULT_NEWS_TYPES);
+        resolve([]);
       });
     });
   }
@@ -52,13 +90,13 @@ class NewsViewModel {
    *
    * @return NewsData[] newsDataList
    */
-  getNewsList(currentPage: number, pageSize: number, path: string): Promise<NewsData[]> {
+  getNewsList(currentPage: number, pageSize: number, path: string): Promise<ArticleBean[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${path}`;
-      url += '?currentPage=' + currentPage + '&pageSize=' + pageSize;
+      url += `/${currentPage}/json`;
       httpRequestGet(url).then((data: ResponseResult) => {
-        if (data.code === Const.SERVER_CODE_SUCCESS) {
-          resolve(data.data);
+        if (data.errorCode === 0) {
+          resolve(data.data.datas);
         } else {
           Logger.error('getNewsList failed', JSON.stringify(data));
           reject($r('app.string.page_none_msg'));
@@ -167,21 +205,30 @@ export class ResponseResult {
   /**
    * Code returned by the network request: success, fail.
    */
-  code: string;
+  errorCode: number;
 
   /**
    * Message returned by the network request.
    */
-  msg: string | Resource;
+  errorMsg: string | Resource;
 
   /**
    * Data returned by the network request.
    */
-  data: string | Object | ArrayBuffer;
+  data: ResponseData | undefined;
 
   constructor() {
-    this.code = '';
-    this.msg = '';
-    this.data = '';
+    this.errorCode = 0;
+    this.errorMsg = '';
   }
+}
+
+export class ResponseData {
+  curPage?: number;
+  datas?: string | Object | ArrayBuffer;
+  offset?: number;
+  over?: boolean;
+  pageCount?: number;
+  size?: number;
+  total?: number;
 }

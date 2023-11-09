@@ -20,7 +20,7 @@ export class CommonConstant {
   /**
    * The host address of the server.
    */
-  static readonly SERVER: string = 'http://**.**.**.**:9588';
+  static readonly SERVER: string = 'https://www.wanandroid.com';
 
   /**
    * Get the news type.
@@ -30,12 +30,12 @@ export class CommonConstant {
   /**
    * Get the news list.
    */
-  static readonly GET_NEWS_LIST: string = 'news/getNewsList';
+  static readonly GET_ARTICLE_LIST: string = 'article/list';
 
   /**
    * The request success status code.
    */
-  static readonly SERVER_CODE_SUCCESS: string = 'success';
+  static readonly SERVER_CODE_SUCCESS: number = 0;
 
   /**
    * The off set coefficient.
