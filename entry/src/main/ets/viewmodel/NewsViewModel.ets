@@ -17,7 +17,7 @@ import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import { httpRequestGet } from '../common/utils/HttpUtil';
 import Logger from '../common/utils/Logger';
 
-export class  ArticleBean {
+export class ArticleBean {
   adminAdd?: boolean;
   apkLink?: string;
   audit?: number;
@@ -85,20 +85,54 @@ class NewsViewModel {
     return Const.TabBars_DEFAULT_NEWS_TYPES;
   }
 
+  getBannerList(): Promise<Banner[]> {
+    return new Promise(async (resolve: Function, reject: Function) => {
+      let url = `${Const.SERVER}/${Const.GET_BANNER_LIST}`;
+      httpRequestGet(url).then((response: ResponseResult) => {
+        if (response.errorCode === 0) {
+          resolve(response.data || []);
+        } else {
+          Logger.error('getNewsList failed', JSON.stringify(response));
+          reject($r('app.string.page_none_msg'));
+        }
+      }).catch((err: Error) => {
+        Logger.error('getNewsList failed', JSON.stringify(err));
+        reject($r('app.string.http_error_message'));
+      });
+    });
+  }
+
   /**
    * Get news type list from server.
    *
    * @return NewsData[] newsDataList
    */
-  getNewsList(currentPage: number, pageSize: number, path: string): Promise<ArticleBean[]> {
+  getArticleList(currentPage: number, pageSize: number, path: string): Promise<ArticleBean[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${path}`;
       url += `/${currentPage}/json`;
       httpRequestGet(url).then((data: ResponseResult) => {
         if (data.errorCode === 0) {
-          resolve(data.data.datas);
+          resolve(data.data?.datas || []);
         } else {
           Logger.error('getNewsList failed', JSON.stringify(data));
+          reject($r('app.string.page_none_msg'));
+        }
+      }).catch((err: Error) => {
+        Logger.error('getNewsList failed', JSON.stringify(err));
+        reject($r('app.string.http_error_message'));
+      });
+    });
+  }
+
+  getArticleTopList(): Promise<ArticleBean[]> {
+    return new Promise(async (resolve: Function, reject: Function) => {
+      let url = `${Const.SERVER}/${Const.GET_TOP_ARTICLE_LIST}`;
+      httpRequestGet(url).then((response: ResponseResult) => {
+        if (response.errorCode === 0) {
+          resolve(response.data || []);
+        } else {
+          Logger.error('getNewsList failed', JSON.stringify(response));
           reject($r('app.string.page_none_msg'));
         }
       }).catch((err: Error) => {
@@ -215,7 +249,7 @@ export class ResponseResult {
   /**
    * Data returned by the network request.
    */
-  data: ResponseData | undefined;
+  data: any | undefined;
 
   constructor() {
     this.errorCode = 0;
@@ -223,12 +257,13 @@ export class ResponseResult {
   }
 }
 
-export class ResponseData {
-  curPage?: number;
-  datas?: string | Object | ArrayBuffer;
-  offset?: number;
-  over?: boolean;
-  pageCount?: number;
-  size?: number;
-  total?: number;
+export class Banner {
+  desc?: string;
+  id?: number;
+  imagePath?: string;
+  isVisible?: number;
+  order?: number;
+  title?: string;
+  type?: number;
+  url?: string;
 }

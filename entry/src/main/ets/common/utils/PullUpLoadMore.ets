@@ -16,10 +16,10 @@
 import promptAction from '@ohos.promptAction';
 import { CommonConstant as Const } from '../constant/CommonConstant';
 import NewsViewModel, { NewsData } from '../../viewmodel/NewsViewModel';
-import NewsModel from '../../viewmodel/NewsModel';
+import ArticleModel from '../../viewmodel/NewsModel';
 
-export function touchMoveLoadMore(newsModel: NewsModel, event: TouchEvent) {
-  if (newsModel.endIndex === newsModel.newsData.length - 1 || newsModel.endIndex === newsModel.newsData.length) {
+export function touchMoveLoadMore(newsModel: ArticleModel, event: TouchEvent) {
+  if (newsModel.endIndex === newsModel.articleData.length - 1 || newsModel.endIndex === newsModel.articleData.length) {
     newsModel.offsetY = event.touches[0].y - newsModel.downY;
     if (Math.abs(newsModel.offsetY) > vp2px(newsModel.pullUpLoadHeight) / 2) {
       newsModel.isCanLoadMore = true;
@@ -29,8 +29,8 @@ export function touchMoveLoadMore(newsModel: NewsModel, event: TouchEvent) {
   }
 }
 
-export function touchUpLoadMore(newsModel: NewsModel) {
-  let self: NewsModel = newsModel;
+export function touchUpLoadMore(newsModel: ArticleModel) {
+  let self: ArticleModel = newsModel;
   animateTo({
     duration: Const.ANIMATION_DURATION,
   }, () => {
@@ -40,14 +40,14 @@ export function touchUpLoadMore(newsModel: NewsModel) {
     self.isLoading = true;
     setTimeout(() => {
       closeLoadMore(newsModel);
-      NewsViewModel.getNewsList(self.currentPage, self.pageSize, Const.GET_ARTICLE_LIST).then((data: NewsData[]) => {
+      NewsViewModel.getArticleList(self.currentPage, self.pageSize, Const.GET_ARTICLE_LIST).then((data: NewsData[]) => {
         if (data.length === self.pageSize) {
           self.currentPage++;
           self.hasMore = true;
         } else {
           self.hasMore = false;
         }
-        self.newsData = self.newsData.concat(data);
+        self.articleData = self.articleData.concat(data);
       }).catch((err: string | Resource) => {
         promptAction.showToast({ message: err });
       })
@@ -57,7 +57,7 @@ export function touchUpLoadMore(newsModel: NewsModel) {
   }
 }
 
-export function closeLoadMore(newsModel: NewsModel) {
+export function closeLoadMore(newsModel: ArticleModel) {
   newsModel.isCanLoadMore = false;
   newsModel.isLoading = false;
   newsModel.isVisiblePullUpLoad = false;

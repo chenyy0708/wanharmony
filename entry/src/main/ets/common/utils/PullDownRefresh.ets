@@ -20,9 +20,9 @@ import {
   RefreshState
 } from '../constant/CommonConstant';
 import NewsViewModel, { NewsData } from '../../viewmodel/NewsViewModel';
-import NewsModel from '../../viewmodel/NewsModel';
+import ArticleModel from '../../viewmodel/NewsModel';
 
-export function listTouchEvent(newsModel: NewsModel, event: TouchEvent) {
+export function listTouchEvent(newsModel: ArticleModel, event: TouchEvent) {
   switch (event.type) {
     case TouchType.Down:
       newsModel.downY = event.touches[0].y;
@@ -62,7 +62,7 @@ export function listTouchEvent(newsModel: NewsModel, event: TouchEvent) {
   }
 }
 
-export function touchMovePullRefresh(newsModel: NewsModel, event: TouchEvent) {
+export function touchMovePullRefresh(newsModel: ArticleModel, event: TouchEvent) {
   if (newsModel.startIndex === 0) {
     newsModel.isPullRefreshOperation = true;
     let height = vp2px(newsModel.pullDownRefreshHeight);
@@ -81,14 +81,14 @@ export function touchMovePullRefresh(newsModel: NewsModel, event: TouchEvent) {
   }
 }
 
-export function touchUpPullRefresh(newsModel: NewsModel) {
+export function touchUpPullRefresh(newsModel: ArticleModel) {
   if (newsModel.isCanRefresh === true) {
     newsModel.offsetY = vp2px(newsModel.pullDownRefreshHeight);
     pullRefreshState(newsModel, RefreshState.Refreshing);
     newsModel.currentPage = 1;
     setTimeout(() => {
-      let self: NewsModel = newsModel;
-      NewsViewModel.getNewsList(newsModel.currentPage, newsModel.pageSize, Const.GET_ARTICLE_LIST).then((data:
+      let self: ArticleModel = newsModel;
+      NewsViewModel.getArticleList(newsModel.currentPage, newsModel.pageSize, Const.GET_ARTICLE_LIST).then((data:
         NewsData[]) => {
         if (data.length === newsModel.pageSize) {
           self.hasMore = true;
@@ -96,7 +96,7 @@ export function touchUpPullRefresh(newsModel: NewsModel) {
         } else {
           self.hasMore = false;
         }
-        self.newsData = data;
+        self.articleData = data;
         closeRefresh(self, true);
       }).catch((err: string | Resource) => {
         promptAction.showToast({ message: err });
@@ -108,7 +108,7 @@ export function touchUpPullRefresh(newsModel: NewsModel) {
   }
 }
 
-export function pullRefreshState(newsModel: NewsModel, state: number) {
+export function pullRefreshState(newsModel: ArticleModel, state: number) {
   switch (state) {
     case RefreshState.DropDown:
       newsModel.pullDownRefreshText = $r('app.string.pull_down_refresh_text');
@@ -147,7 +147,7 @@ export function pullRefreshState(newsModel: NewsModel, state: number) {
   }
 }
 
-export function closeRefresh(newsModel: NewsModel, isRefreshSuccess: boolean) {
+export function closeRefresh(newsModel: ArticleModel, isRefreshSuccess: boolean) {
   let self = newsModel;
   setTimeout(() => {
     let delay = Const.RefreshConstant_DELAY_PULL_DOWN_REFRESH;

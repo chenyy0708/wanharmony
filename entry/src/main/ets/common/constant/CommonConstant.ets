@@ -33,6 +33,16 @@ export class CommonConstant {
   static readonly GET_ARTICLE_LIST: string = 'article/list';
 
   /**
+   * Get the news list.
+   */
+  static readonly GET_TOP_ARTICLE_LIST: string = 'article/top/json';
+
+  /**
+   * Get the news list.
+   */
+  static readonly GET_BANNER_LIST: string = 'banner/json';
+
+  /**
    * The request success status code.
    */
   static readonly SERVER_CODE_SUCCESS: number = 0;

@@ -20,46 +20,67 @@ import LoadMoreLayout from './LoadMoreLayout';
 import RefreshLayout from './RefreshLayout';
 import CustomRefreshLoadLayout from './CustomRefreshLoadLayout';
 import { listTouchEvent } from '../common/utils/PullDownRefresh';
-import NewsViewModel, { ArticleBean, CustomRefreshLoadLayoutClass, NewsData } from '../viewmodel/NewsViewModel';
+import NewsViewModel, { ArticleBean, Banner, CustomRefreshLoadLayoutClass } from '../viewmodel/NewsViewModel';
 import NoMoreLayout from './NoMoreLayout';
-import NewsModel from '../viewmodel/NewsModel';
+import ArticleModel from '../viewmodel/NewsModel';
 
 /**
  * The news list component.
  */
 @Component
 export default struct NewsList {
-  @State newsModel: NewsModel = new NewsModel();
+  @State articleModel: ArticleModel = new ArticleModel();
   @Watch('changeCategory') @Link currentIndex: number;
 
   changeCategory() {
-    this.newsModel.currentPage = 1;
-    NewsViewModel.getNewsList(this.newsModel.currentPage, this.newsModel.pageSize, Const.GET_ARTICLE_LIST)
+    this.articleModel.currentPage = 1;
+    NewsViewModel.getArticleList(this.articleModel.currentPage, this.articleModel.pageSize, Const.GET_ARTICLE_LIST)
       .then((data: ArticleBean[]) => {
-        this.newsModel.pageState = PageState.Success;
-        this.newsModel.currentPage++;
-        this.newsModel.hasMore = true;
-        this.newsModel.newsData = data;
+        this.articleModel.pageState = PageState.Success;
+        this.articleModel.currentPage++;
+        this.articleModel.hasMore = true;
+        this.articleModel.articleData = data;
       })
       .catch((err: string | Resource) => {
         promptAction.showToast({
           message: err,
           duration: Const.ANIMATION_DURATION
         });
-        this.newsModel.pageState = PageState.Fail;
+        this.articleModel.pageState = PageState.Fail;
       });
   }
 
   aboutToAppear() {
     // Request news data.
     this.changeCategory();
+    NewsViewModel.getBannerList()
+      .then((data: Banner[]) => {
+        this.articleModel.bannerData = data;
+      })
+      .catch((err: string | Resource) => {
+        promptAction.showToast({
+          message: err,
+          duration: Const.ANIMATION_DURATION
+        });
+        this.articleModel.pageState = PageState.Fail;
+      })
+    NewsViewModel.getArticleTopList()
+      .then((data: ArticleBean[]) => {
+        this.articleModel.topData = data;
+      })
+      .catch((err: string | Resource) => {
+        promptAction.showToast({
+          message: err,
+          duration: Const.ANIMATION_DURATION
+        });
+      })
   }
 
   build() {
     Column() {
-      if (this.newsModel.pageState === PageState.Success) {
+      if (this.articleModel.pageState === PageState.Success) {
         this.ListLayout()
-      } else if (this.newsModel.pageState === PageState.Loading) {
+      } else if (this.articleModel.pageState === PageState.Loading) {
         this.LoadingLayout()
       } else {
         this.FailLayout()
@@ -70,8 +91,8 @@ export default struct NewsList {
     .justifyContent(FlexAlign.Center)
     .onTouch((event: TouchEvent | undefined) => {
       if (event) {
-        if (this.newsModel.pageState === PageState.Success) {
-          listTouchEvent(this.newsModel, event);
+        if (this.articleModel.pageState === PageState.Success) {
+          listTouchEvent(this.articleModel, event);
         }
       }
     })
@@ -79,31 +100,49 @@ export default struct NewsList {
 
   @Builder LoadingLayout() {
     CustomRefreshLoadLayout({ customRefreshLoadClass: new CustomRefreshLoadLayoutClass(true,
-      $r('app.media.ic_pull_up_load'), $r('app.string.pull_up_load_text'), this.newsModel.pullDownRefreshHeight) })
+      $r('app.media.ic_pull_up_load'), $r('app.string.pull_up_load_text'), this.articleModel.pullDownRefreshHeight) })
   }
 
   @Builder ListLayout() {
     List() {
       ListItem() {
         RefreshLayout({
-          refreshLayoutClass: new CustomRefreshLoadLayoutClass(this.newsModel.isVisiblePullDown, this.newsModel.pullDownRefreshImage,
-            this.newsModel.pullDownRefreshText, this.newsModel.pullDownRefreshHeight)
+          refreshLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullDown, this.articleModel.pullDownRefreshImage,
+            this.articleModel.pullDownRefreshText, this.articleModel.pullDownRefreshHeight)
         })
       }
 
-      ForEach(this.newsModel.newsData, (item: ArticleBean) => {
+      ListItem() {
+        Swiper() {
+          ForEach(this.articleModel.bannerData, (item: Banner) => {
+            Image(item.imagePath)
+              .width(Const.FULL_WIDTH)
+              .height(Const.FULL_WIDTH)
+          })
+        }
+        .width(Const.FULL_WIDTH)
+        .height(150)
+      }
+
+      ForEach(this.articleModel.topData, (item: ArticleBean) => {
+        ListItem() {
+          NewsItem({ articleBean: item, isTop : true })
+        }
+        .backgroundColor($r('app.color.white'))
+        .width('100%')
+      }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
+      ForEach(this.articleModel.articleData, (item: ArticleBean) => {
         ListItem() {
           NewsItem({ articleBean: item })
         }
         .backgroundColor($r('app.color.white'))
         .width('100%')
-      }, (item: NewsData, index?: number) => JSON.stringify(item) + index)
-
+      }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
       ListItem() {
-        if (this.newsModel.hasMore) {
+        if (this.articleModel.hasMore) {
           LoadMoreLayout({
-            loadMoreLayoutClass: new CustomRefreshLoadLayoutClass(this.newsModel.isVisiblePullUpLoad, this.newsModel.pullUpLoadImage,
-              this.newsModel.pullUpLoadText, this.newsModel.pullUpLoadHeight)
+            loadMoreLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullUpLoad, this.articleModel.pullUpLoadImage,
+              this.articleModel.pullUpLoadText, this.articleModel.pullUpLoadHeight)
           })
         } else {
           NoMoreLayout()
@@ -119,11 +158,11 @@ export default struct NewsList {
     })
     // Remove the rebound effect.
     .edgeEffect(EdgeEffect.None)
-    .offset({ x: 0, y: `${this.newsModel.offsetY}${CommonConstant.LIST_OFFSET_UNIT}` })
+    .offset({ x: 0, y: `${this.articleModel.offsetY}${CommonConstant.LIST_OFFSET_UNIT}` })
     .onScrollIndex((start: number, end: number) => {
       // Listen to the first index of the current list.
-      this.newsModel.startIndex = start;
-      this.newsModel.endIndex = end;
+      this.articleModel.startIndex = start;
+      this.articleModel.endIndex = end;
     })
   }
 

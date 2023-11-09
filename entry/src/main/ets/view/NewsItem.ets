@@ -23,18 +23,21 @@ import { ArticleBean, NewsData, NewsFile } from '../viewmodel/NewsViewModel';
 @Preview
 export default struct NewsItem {
   private articleBean: ArticleBean = new ArticleBean();
+  private isTop : boolean = false;
 
   build() {
     Column() {
       Row() {
-        Text('置顶')
-          .borderColor('#ff0000')
-          .fontSize(11)
-          .fontColor('#333333')
-          .padding({ left: 3, right: 3, top: 2, bottom: 2 })
-          .borderRadius(2)
-          .borderWidth(1)
-          .margin({ right: 5 })
+        if(this.isTop) {
+          Text('置顶')
+            .borderColor('#ff0000')
+            .fontSize(11)
+            .fontColor('#333333')
+            .padding({ left: 3, right: 3, top: 2, bottom: 2 })
+            .borderRadius(2)
+            .borderWidth(1)
+            .margin({ right: 5 })
+        }
         Text(this.articleBean.chapterName || '').fontSize(11).fontColor('#666666')
         Blank()
         Text(this.articleBean.niceDate || '').fontSize(11).fontColor('#666666')
