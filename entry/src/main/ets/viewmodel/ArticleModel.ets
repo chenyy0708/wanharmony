@@ -18,9 +18,7 @@ import { CommonConstant as Const, PageState } from '../common/constant/CommonCon
 import { ArticleBean, Banner } from './ArticleViewModel';
 
 export default class ArticleModel {
-  topData: Array<ArticleBean> = [];
   articleData: Array<ArticleBean> = [];
-  bannerData: Array<Banner> = [];
   currentPage: number = 1;
   pageSize: number = Const.PAGE_SIZE;
   pullDownRefreshText: Resource = $r('app.string.pull_down_refresh_text');

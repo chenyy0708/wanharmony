@@ -14,8 +14,8 @@
  */
 import router from '@ohos.router';
 
-import { CommonConstant as Const } from '../common/constant/CommonConstant';
-import { ArticleBean } from '../viewmodel/ArticleViewModel';
+import { CommonConstant as Const } from '../../common/constant/CommonConstant';
+import { ArticleBean } from '../../viewmodel/ArticleViewModel';
 
 /**
  * The news list item component.

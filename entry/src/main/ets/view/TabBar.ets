@@ -15,7 +15,7 @@
 
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import MainViewModel, { TabBean } from '../viewmodel/MainViewModel';
-import ArticleList from './ArticleList';
+import ArticleList from './Article/ArticleList';
 
 /**
  * The tabBar component.

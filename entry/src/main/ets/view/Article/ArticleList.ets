@@ -14,15 +14,17 @@
  */
 
 import promptAction from '@ohos.promptAction';
-import { CommonConstant, CommonConstant as Const, PageState } from '../common/constant/CommonConstant';
+import { CommonConstant, CommonConstant as Const, PageState } from '../../common/constant/CommonConstant';
 import ArticleItem from './ArticleItem';
-import LoadMoreLayout from './LoadMoreLayout';
-import RefreshLayout from './RefreshLayout';
-import CustomRefreshLoadLayout from './CustomRefreshLoadLayout';
-import { listTouchEvent } from '../common/utils/PullDownRefresh';
-import NewsViewModel, { ArticleBean, Banner, CustomRefreshLoadLayoutClass } from '../viewmodel/ArticleViewModel';
-import NoMoreLayout from './NoMoreLayout';
-import ArticleModel from '../viewmodel/ArticleModel';
+import LoadMoreLayout from '../LoadMoreLayout';
+import RefreshLayout from '../RefreshLayout';
+import CustomRefreshLoadLayout from '../CustomRefreshLoadLayout';
+import { listTouchEvent } from '../../common/utils/PullDownRefresh';
+import NewsViewModel, { ArticleBean, Banner, CustomRefreshLoadLayoutClass } from '../../viewmodel/ArticleViewModel';
+import NoMoreLayout from '../NoMoreLayout';
+import ArticleModel from '../../viewmodel/ArticleModel';
+import BannerItem from './BannerItem';
+import ArticleTopItem from './ArticleTopItem';
 
 /**
  * The news list component.
@@ -51,29 +53,7 @@ export default struct ArticleList {
   }
 
   aboutToAppear() {
-    // Request news data.
     this.changeCategory();
-    NewsViewModel.getBannerList()
-      .then((data: Banner[]) => {
-        this.articleModel.bannerData = data;
-      })
-      .catch((err: string | Resource) => {
-        promptAction.showToast({
-          message: err,
-          duration: Const.ANIMATION_DURATION
-        });
-        this.articleModel.pageState = PageState.Fail;
-      })
-    NewsViewModel.getArticleTopList()
-      .then((data: ArticleBean[]) => {
-        this.articleModel.topData = data;
-      })
-      .catch((err: string | Resource) => {
-        promptAction.showToast({
-          message: err,
-          duration: Const.ANIMATION_DURATION
-        });
-      })
   }
 
   build() {
@@ -113,24 +93,13 @@ export default struct ArticleList {
       }
 
       ListItem() {
-        Swiper() {
-          ForEach(this.articleModel.bannerData, (item: Banner) => {
-            Image(item.imagePath)
-              .width(Const.FULL_WIDTH)
-              .height(Const.FULL_WIDTH)
-          })
-        }
-        .width(Const.FULL_WIDTH)
-        .height(150)
+        BannerItem()
       }
 
-      ForEach(this.articleModel.topData, (item: ArticleBean) => {
-        ListItem() {
-          ArticleItem({ articleBean: item, isTop : true })
-        }
-        .backgroundColor($r('app.color.white'))
-        .width('100%')
-      }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
+      ListItem() {
+        ArticleTopItem()
+      }
+
       ForEach(this.articleModel.articleData, (item: ArticleBean) => {
         ListItem() {
           ArticleItem({ articleBean: item })
