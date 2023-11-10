@@ -1,5 +1,6 @@
 import promptAction from '@ohos.promptAction';
 import { CommonConstant } from '../../common/constant/CommonConstant';
+import Logger from '../../common/utils/Logger';
 import ArticleViewModel, { ArticleBean, Banner } from '../../viewmodel/ArticleViewModel';
 import ArticleItem from './ArticleItem';
 
@@ -11,6 +12,7 @@ export default struct ArticleTopItem {
     ArticleViewModel.getArticleTopList()
       .then((data: ArticleBean[]) => {
         this.topData = data;
+        Logger.debug("ArticleList", `ArticleTopItem  topData:${this.topData.length}`)
       })
       .catch((err: string | Resource) => {
         promptAction.showToast({

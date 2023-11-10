@@ -74,7 +74,7 @@ class ArticleViewModel {
     });
   }
 
-  getArticleList(currentPage: number, pageSize: number, path: string): Promise<ArticleBean[]> {
+  getArticleList(currentPage: number, path: string): Promise<ArticleBean[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${path}`;
       url += `/${currentPage}/json`;

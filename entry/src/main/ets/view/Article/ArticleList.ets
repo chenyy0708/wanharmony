@@ -14,18 +14,16 @@
  */
 
 import promptAction from '@ohos.promptAction';
-import { CommonConstant, CommonConstant as Const, PageState } from '../../common/constant/CommonConstant';
+import { CommonConstant as Const, PageState } from '../../common/constant/CommonConstant';
 import ArticleItem from './ArticleItem';
-import LoadMoreLayout from '../LoadMoreLayout';
-import RefreshLayout from '../RefreshLayout';
 import CustomRefreshLoadLayout from '../CustomRefreshLoadLayout';
-import { listTouchEvent } from '../../common/utils/PullDownRefresh';
-import NewsViewModel, { ArticleBean, Banner, CustomRefreshLoadLayoutClass } from '../../viewmodel/ArticleViewModel';
-import NoMoreLayout from '../NoMoreLayout';
+import NewsViewModel, { ArticleBean, CustomRefreshLoadLayoutClass } from '../../viewmodel/ArticleViewModel';
 import ArticleModel from '../../viewmodel/ArticleModel';
 import BannerItem from './BannerItem';
 import ArticleTopItem from './ArticleTopItem';
 import Logger from '../../common/utils/Logger';
+import LoadMoreLayout from '../LoadMoreLayout';
+import NoMoreLayout from '../NoMoreLayout';
 
 /**
  * The news list component.
@@ -33,28 +31,40 @@ import Logger from '../../common/utils/Logger';
 @Component
 export default struct ArticleList {
   @State articleModel: ArticleModel = new ArticleModel();
-  @Watch('changeCategory') @Link currentIndex: number;
+  @Link currentIndex: number;
 
-  changeCategory() {
-    this.articleModel.currentPage = 1;
-    NewsViewModel.getArticleList(this.articleModel.currentPage, this.articleModel.pageSize, Const.GET_ARTICLE_LIST)
+  loadArticleData(isLoadMore : boolean) {
+    if(isLoadMore) {
+      this.articleModel.currentPage++;
+    } else {
+      this.articleModel.currentPage = 1;
+    }
+    this.articleModel.currentPage
+    NewsViewModel.getArticleList(this.articleModel.currentPage, Const.GET_ARTICLE_LIST)
       .then((data: ArticleBean[]) => {
         this.articleModel.pageState = PageState.Success;
-        this.articleModel.currentPage++;
-        this.articleModel.hasMore = true;
-        this.articleModel.articleData = data;
+        if(isLoadMore) {
+          this.articleModel.articleData = this.articleModel.articleData.concat(data);
+        } else {
+          this.articleModel.articleData = data;
+        }
+        this.articleModel.isRefreshing = false;
+        this.articleModel.isCanLoadMore = true;
+        Logger.debug("ArticleList", `ArticleList  articleData:${this.articleModel.articleData.length}`)
       })
       .catch((err: string | Resource) => {
         promptAction.showToast({
           message: err,
           duration: Const.ANIMATION_DURATION
         });
+        this.articleModel.isRefreshing = false;
+        this.articleModel.isCanLoadMore = true;
         this.articleModel.pageState = PageState.Fail;
       });
   }
 
   aboutToAppear() {
-    this.changeCategory();
+    this.loadArticleData(false);
   }
 
   build() {
@@ -70,13 +80,6 @@ export default struct ArticleList {
     .width(Const.FULL_WIDTH)
     .height(Const.FULL_HEIGHT)
     .justifyContent(FlexAlign.Center)
-    .onTouch((event: TouchEvent | undefined) => {
-      if (event) {
-        if (this.articleModel.pageState === PageState.Success) {
-          listTouchEvent(this.articleModel, event);
-        }
-      }
-    })
   }
 
   @Builder LoadingLayout() {
@@ -85,15 +88,8 @@ export default struct ArticleList {
   }
 
   @Builder ListLayout() {
-    Refresh({ refreshing : false }) {
+    Refresh({ refreshing: this.articleModel.isRefreshing }) {
       List() {
-        // ListItem() {
-        //   RefreshLayout({
-        //     refreshLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullDown, this.articleModel.pullDownRefreshImage,
-        //       this.articleModel.pullDownRefreshText, this.articleModel.pullDownRefreshHeight)
-        //   })
-        // }
-
         ListItem() {
           BannerItem()
         }
@@ -109,16 +105,13 @@ export default struct ArticleList {
           .backgroundColor($r('app.color.white'))
           .width('100%')
         }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
-        // ListItem() {
-        //   if (this.articleModel.hasMore) {
-        //     LoadMoreLayout({
-        //       loadMoreLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullUpLoad, this.articleModel.pullUpLoadImage,
-        //         this.articleModel.pullUpLoadText, this.articleModel.pullUpLoadHeight)
-        //     })
-        //   } else {
-        //     NoMoreLayout()
-        //   }
-        // }
+        ListItem() {
+          if (this.articleModel.hasMore) {
+            LoadMoreLayout()
+          } else {
+            NoMoreLayout()
+          }
+        }
       }
       .width('100%')
       .height(Const.FULL_HEIGHT)
@@ -127,20 +120,22 @@ export default struct ArticleList {
         strokeWidth: Const.NewsListConstant_LIST_DIVIDER_STROKE_WIDTH,
         endMargin: Const.NewsListConstant_LIST_MARGIN_RIGHT
       })
-      // Remove the rebound effect.
-      // .edgeEffect(EdgeEffect.None)
-      // .offset({ x: 0, y: `${this.articleModel.offsetY}${CommonConstant.LIST_OFFSET_UNIT}` })
-      // .onScrollIndex((start: number, end: number) => {
-      //   // Listen to the first index of the current list.
-      //   this.articleModel.startIndex = start;
-      //   this.articleModel.endIndex = end;
-      // })
+      .onScrollIndex((start, end) => {
+        Logger.debug("ArticleList", `onScrollIndex  start:${start}----end:${end}`)
+        if (this.articleModel.hasMore && this.articleModel.isCanLoadMore && end >= this.articleModel.articleData.length + 2) {
+          Logger.debug("ArticleList", `加载更多`)
+          this.articleModel.isCanLoadMore = false;
+          this.loadArticleData(true);
+        }
+      })
     }
     .onStateChange((state: RefreshStatus) => {
-      Logger.debug('刷新state:' + state.toString())
+      Logger.debug("ArticleList", '刷新state:' + state.toString())
     })
-    .onRefreshing(()=>{
-      Logger.debug('onRefreshing:')
+    .onRefreshing(() => {
+      this.articleModel.isRefreshing = true;
+      this.loadArticleData(false);
+      Logger.debug("ArticleList", 'onRefreshing:')
     })
   }
 

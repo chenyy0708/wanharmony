@@ -1,5 +1,6 @@
 import promptAction from '@ohos.promptAction';
 import { CommonConstant } from '../../common/constant/CommonConstant';
+import Logger from '../../common/utils/Logger';
 import ArticleViewModel, { Banner } from '../../viewmodel/ArticleViewModel';
 
 @Component
@@ -10,6 +11,7 @@ export default struct BannerItem {
     ArticleViewModel.getBannerList()
       .then((data: Banner[]) => {
         this.bannerData = data;
+        Logger.debug("ArticleList", `BannerItem  bannerData:${this.bannerData.length}`)
       })
       .catch((err: string | Resource) => {
         promptAction.showToast({
