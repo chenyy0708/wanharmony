@@ -25,6 +25,7 @@ import NoMoreLayout from '../NoMoreLayout';
 import ArticleModel from '../../viewmodel/ArticleModel';
 import BannerItem from './BannerItem';
 import ArticleTopItem from './ArticleTopItem';
+import Logger from '../../common/utils/Logger';
 
 /**
  * The news list component.
@@ -84,54 +85,62 @@ export default struct ArticleList {
   }
 
   @Builder ListLayout() {
-    List() {
-      ListItem() {
-        RefreshLayout({
-          refreshLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullDown, this.articleModel.pullDownRefreshImage,
-            this.articleModel.pullDownRefreshText, this.articleModel.pullDownRefreshHeight)
-        })
-      }
+    Refresh({ refreshing : false }) {
+      List() {
+        // ListItem() {
+        //   RefreshLayout({
+        //     refreshLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullDown, this.articleModel.pullDownRefreshImage,
+        //       this.articleModel.pullDownRefreshText, this.articleModel.pullDownRefreshHeight)
+        //   })
+        // }
 
-      ListItem() {
-        BannerItem()
-      }
-
-      ListItem() {
-        ArticleTopItem()
-      }
-
-      ForEach(this.articleModel.articleData, (item: ArticleBean) => {
         ListItem() {
-          ArticleItem({ articleBean: item })
+          BannerItem()
         }
-        .backgroundColor($r('app.color.white'))
-        .width('100%')
-      }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
-      ListItem() {
-        if (this.articleModel.hasMore) {
-          LoadMoreLayout({
-            loadMoreLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullUpLoad, this.articleModel.pullUpLoadImage,
-              this.articleModel.pullUpLoadText, this.articleModel.pullUpLoadHeight)
-          })
-        } else {
-          NoMoreLayout()
+
+        ListItem() {
+          ArticleTopItem()
         }
+
+        ForEach(this.articleModel.articleData, (item: ArticleBean) => {
+          ListItem() {
+            ArticleItem({ articleBean: item })
+          }
+          .backgroundColor($r('app.color.white'))
+          .width('100%')
+        }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
+        // ListItem() {
+        //   if (this.articleModel.hasMore) {
+        //     LoadMoreLayout({
+        //       loadMoreLayoutClass: new CustomRefreshLoadLayoutClass(this.articleModel.isVisiblePullUpLoad, this.articleModel.pullUpLoadImage,
+        //         this.articleModel.pullUpLoadText, this.articleModel.pullUpLoadHeight)
+        //     })
+        //   } else {
+        //     NoMoreLayout()
+        //   }
+        // }
       }
+      .width('100%')
+      .height(Const.FULL_HEIGHT)
+      .divider({
+        color: $r('app.color.dividerColor'),
+        strokeWidth: Const.NewsListConstant_LIST_DIVIDER_STROKE_WIDTH,
+        endMargin: Const.NewsListConstant_LIST_MARGIN_RIGHT
+      })
+      // Remove the rebound effect.
+      // .edgeEffect(EdgeEffect.None)
+      // .offset({ x: 0, y: `${this.articleModel.offsetY}${CommonConstant.LIST_OFFSET_UNIT}` })
+      // .onScrollIndex((start: number, end: number) => {
+      //   // Listen to the first index of the current list.
+      //   this.articleModel.startIndex = start;
+      //   this.articleModel.endIndex = end;
+      // })
     }
-    .width('100%')
-    .height(Const.FULL_HEIGHT)
-    .divider({
-      color: $r('app.color.dividerColor'),
-      strokeWidth: Const.NewsListConstant_LIST_DIVIDER_STROKE_WIDTH,
-      endMargin: Const.NewsListConstant_LIST_MARGIN_RIGHT
+    .onStateChange((state: RefreshStatus) => {
+      Logger.debug('刷新state:' + state.toString())
     })
-    // Remove the rebound effect.
-    .edgeEffect(EdgeEffect.None)
-    .offset({ x: 0, y: `${this.articleModel.offsetY}${CommonConstant.LIST_OFFSET_UNIT}` })
-    .onScrollIndex((start: number, end: number) => {
-      // Listen to the first index of the current list.
-      this.articleModel.startIndex = start;
-      this.articleModel.endIndex = end;
+    .onRefreshing(()=>{
+      Logger.debug('onRefreshing:')
     })
   }
 

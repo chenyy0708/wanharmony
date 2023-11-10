@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "/Users/yangyichen/.ohos/config/auto_debug_NewsDataArkTS_com.example.newsdataarkts_900086000150163199.cer",
-          "storePassword": "0000001A5AD77E0EBB4FDB8740B2D7AE56C34CAF06B5C7A2386E19C28DF3A077C7C1FE8A8ED1BF07DB5C",
+          "certpath": "/Users/yangyichen/.ohos/config/auto_debug_WanHarmony_com.chenyy.wanharmony_900086000150163199.cer",
+          "storePassword": "0000001B68502245DAD99F8734E848EDFF17F936B27A5013D0F75394DA9F0C2E65E1732CF8105CDF1C396B",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A0C98CF3F92E7B4B015CDE1D0B6489A8C204AF4E96451B9EAC65B829FC230401509ACD253651A",
-          "profile": "/Users/yangyichen/.ohos/config/auto_debug_NewsDataArkTS_com.example.newsdataarkts_900086000150163199.p7b",
+          "keyPassword": "0000001B1917F65A5E79D1BFA3BF19C5BF38C2CF48267E7E98A36A5C26C9185F221619D8BB5E8192A2E060",
+          "profile": "/Users/yangyichen/.ohos/config/auto_debug_WanHarmony_com.chenyy.wanharmony_900086000150163199.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/yangyichen/.ohos/config/auto_debug_NewsDataArkTS_com.example.newsdataarkts_900086000150163199.p12"
+          "storeFile": "/Users/yangyichen/.ohos/config/auto_debug_WanHarmony_com.chenyy.wanharmony_900086000150163199.p12"
         }
       }
     ],
