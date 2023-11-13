@@ -14,7 +14,7 @@
  */
 
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
-import { httpRequestGet } from '../common/utils/HttpUtil';
+import { fetch } from '../common/utils/FetchUtil';
 import Logger from '../common/utils/Logger';
 
 export class ArticleBean {
@@ -56,11 +56,10 @@ export class ArticleBean {
 }
 
 class ArticleViewModel {
-
   getBannerList(): Promise<Banner[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${Const.GET_BANNER_LIST}`;
-      httpRequestGet(url).then((response: ResponseResult) => {
+      fetch({ url }).then((response: ResponseResult) => {
         if (response.errorCode === 0) {
           resolve(response.data || []);
         } else {
@@ -78,7 +77,7 @@ class ArticleViewModel {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${path}`;
       url += `/${currentPage}/json`;
-      httpRequestGet(url).then((data: ResponseResult) => {
+      fetch({ url }).then((data: ResponseResult) => {
         if (data.errorCode === 0) {
           resolve(data.data?.datas || []);
         } else {
@@ -95,7 +94,7 @@ class ArticleViewModel {
   getArticleTopList(): Promise<ArticleBean[]> {
     return new Promise(async (resolve: Function, reject: Function) => {
       let url = `${Const.SERVER}/${Const.GET_TOP_ARTICLE_LIST}`;
-      httpRequestGet(url).then((response: ResponseResult) => {
+      fetch({ url }).then((response: ResponseResult) => {
         if (response.errorCode === 0) {
           resolve(response.data || []);
         } else {
@@ -124,17 +123,14 @@ export class CustomRefreshLoadLayoutClass {
    * Custom refresh load layout isVisible.
    */
   isVisible: boolean;
-
   /**
    * Custom refresh load layout imageSrc.
    */
   imageSrc: Resource;
-
   /**
    * Custom refresh load layout textValue.
    */
   textValue: Resource;
-
   /**
    * Custom refresh load layout heightValue.
    */
