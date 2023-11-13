@@ -7,5 +7,7 @@
   "description": "example description",
   "repository": {},
   "version": "1.0.0",
-  "dependencies": {}
+  "dependencies": {
+    "@ohos/axios": "^2.0.5-rc.0"
+  }
 }
