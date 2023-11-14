@@ -16,6 +16,7 @@
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import MainViewModel, { TabBean } from '../viewmodel/MainViewModel';
 import ArticleList from './Article/ArticleList';
+import KnowledgeList from './Knowledge/KnowledgeList';
 
 /**
  * The tabBar component.
@@ -26,7 +27,7 @@ export default struct TabBar {
   @State tabBarArray: TabBean[] = MainViewModel.getTabList();
   @State currentIndex: number = 0;
   @State currentPage: number = 1;
-  @State isBig: boolean = false;
+  @Provide('isBig') isBig: boolean = false;
 
   @Builder
   TabBuilder(index: number, tabBean: TabBean) {
@@ -49,12 +50,15 @@ export default struct TabBar {
           Column() {
             if (index === 0) {
               ArticleList({ currentIndex: $currentIndex })
+            } else if (index === 1) {
+              KnowledgeList()
             } else {
               Text(tabsItem.name)
                 .onClick(() => {
                   this.isBig = !this.isBig
                 })
                 .backgroundColor('#00ff00')
+                .height(this.isBig ? 400 : 200)
                 .animation({
                   duration: 1000,
                   tempo: 3.0,
@@ -63,7 +67,6 @@ export default struct TabBar {
                   playMode: PlayMode.Normal,
                   iterations: 1
                 })
-                .height(this.isBig ? 400 : 200)
 
             }
           }

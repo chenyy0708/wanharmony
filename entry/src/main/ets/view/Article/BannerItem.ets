@@ -6,6 +6,11 @@ import ArticleViewModel, { Banner } from '../../viewmodel/ArticleViewModel';
 @Component
 export default struct BannerItem {
   @State bannerData: Array<Banner> = [];
+  @Consume('isBig') @Watch('onStateChange') isBig: boolean
+
+  private onStateChange() {
+    Logger.debug('BannerItem','isBig:' + this.isBig)
+  }
 
   aboutToAppear() {
     ArticleViewModel.getBannerList()
@@ -27,6 +32,9 @@ export default struct BannerItem {
           Image(item.imagePath)
             .width(CommonConstant.FULL_WIDTH)
             .height(CommonConstant.FULL_WIDTH)
+            .onClick(()=>{
+              this.isBig = !this.isBig
+            })
         })
       }
       .width(CommonConstant.FULL_WIDTH)
