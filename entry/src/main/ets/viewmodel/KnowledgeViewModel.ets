@@ -1,7 +1,7 @@
 import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import { fetch } from '../common/utils/FetchUtil';
 import Logger from '../common/utils/Logger';
-import { ResponseResult } from './ArticleViewModel';
+import { ArticleBean, ResponseResult } from './ArticleViewModel';
 
 export interface KnowledgeBean {
   articleList?: any[];
@@ -29,6 +29,23 @@ class KnowledgeViewMode {
       fetch({ url }).then((response: ResponseResult) => {
         if (response.errorCode === 0) {
           resolve(response.data || []);
+        } else {
+          Logger.error('getNewsList failed', JSON.stringify(response));
+          reject($r('app.string.page_none_msg'));
+        }
+      }).catch((err: Error) => {
+        Logger.error('getNewsList failed', JSON.stringify(err));
+        reject($r('app.string.http_error_message'));
+      });
+    });
+  }
+
+  getKnowledgeDetail(courseId: number): Promise<ArticleBean[]> {
+    return new Promise(async (resolve: Function, reject: Function) => {
+      let url = `${Const.SERVER}/article/list/0/json?cid=${courseId}`;
+      fetch({ url }).then((response: ResponseResult) => {
+        if (response.errorCode === 0) {
+          resolve(response.data?.datas || []);
         } else {
           Logger.error('getNewsList failed', JSON.stringify(response));
           reject($r('app.string.page_none_msg'));

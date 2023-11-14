@@ -67,7 +67,7 @@ struct KnowledgeItem {
     .onClick(() => {
       router.pushUrl({
         url: 'pages/KnowledgeDetail',
-        params: { courseId: this.knowledgeBean.courseId, title: this.knowledgeBean.name }
+        params: { courseId: this.knowledgeBean.id, title: this.knowledgeBean.name }
       })
     })
   }
