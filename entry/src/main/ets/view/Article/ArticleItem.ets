@@ -57,6 +57,7 @@ export default struct ArticleItem {
     }.padding(10).onClick(()=>{
       router.pushUrl({url : 'pages/WebPage' , params : { url : this.articleBean.link , title : this.articleBean.title }})
     })
+    .backgroundColor($r('app.color.white'))
 
   }
 }

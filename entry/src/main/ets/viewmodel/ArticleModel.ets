@@ -18,7 +18,6 @@ import { CommonConstant as Const, PageState } from '../common/constant/CommonCon
 import { ArticleBean, Banner } from './ArticleViewModel';
 
 export default class ArticleModel {
-  articleData: Array<ArticleBean> = [];
   currentPage: number = 1;
   pullDownRefreshHeight: number = Const.CUSTOM_LAYOUT_HEIGHT;
   pageState: number = PageState.Loading;

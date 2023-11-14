@@ -15,15 +15,13 @@
 
 import promptAction from '@ohos.promptAction';
 import { CommonConstant as Const, PageState } from '../../common/constant/CommonConstant';
-import ArticleItem from './ArticleItem';
 import CustomRefreshLoadLayout from '../CustomRefreshLoadLayout';
 import NewsViewModel, { ArticleBean, CustomRefreshLoadLayoutClass } from '../../viewmodel/ArticleViewModel';
 import ArticleModel from '../../viewmodel/ArticleModel';
+import { PullToRefresh, PullToRefreshConfigurator } from '@ohos/pulltorefresh';
+import ArticleItem from './ArticleItem';
 import BannerItem from './BannerItem';
 import ArticleTopItem from './ArticleTopItem';
-import Logger from '../../common/utils/Logger';
-import LoadMoreLayout from '../LoadMoreLayout';
-import NoMoreLayout from '../NoMoreLayout';
 
 /**
  * The news list component.
@@ -32,25 +30,26 @@ import NoMoreLayout from '../NoMoreLayout';
 export default struct ArticleList {
   @State articleModel: ArticleModel = new ArticleModel();
   @Link currentIndex: number;
+  @State data: ArticleBean[] = [];
 
-  loadArticleData(isLoadMore : boolean) {
-    if(isLoadMore) {
+  loadArticleData(isLoadMore: boolean) {
+    if (isLoadMore) {
       this.articleModel.currentPage++;
     } else {
       this.articleModel.currentPage = 1;
     }
+    this.articleModel.pageState = PageState.Success;
     this.articleModel.currentPage
     NewsViewModel.getArticleList(this.articleModel.currentPage, Const.GET_ARTICLE_LIST)
-      .then((data: ArticleBean[]) => {
+      .then((datas: ArticleBean[]) => {
         this.articleModel.pageState = PageState.Success;
-        if(isLoadMore) {
-          this.articleModel.articleData = this.articleModel.articleData.concat(data);
+        if (isLoadMore) {
+          this.data = this.data.concat(datas);
         } else {
-          this.articleModel.articleData = data;
+          this.data = datas;
         }
         this.articleModel.isRefreshing = false;
         this.articleModel.isCanLoadMore = true;
-        Logger.debug("ArticleList", `ArticleList  articleData:${this.articleModel.articleData.length}`)
       })
       .catch((err: string | Resource) => {
         promptAction.showToast({
@@ -82,64 +81,47 @@ export default struct ArticleList {
     .justifyContent(FlexAlign.Center)
   }
 
-  @Builder LoadingLayout() {
+  @Builder
+  LoadingLayout() {
     CustomRefreshLoadLayout({ customRefreshLoadClass: new CustomRefreshLoadLayoutClass(true,
       $r('app.media.ic_pull_up_load'), $r('app.string.pull_up_load_text'), this.articleModel.pullDownRefreshHeight) })
   }
 
-  @Builder ListLayout() {
-    Refresh({ refreshing: this.articleModel.isRefreshing }) {
-      List() {
-        ListItem() {
-          BannerItem()
-        }
+  // 需绑定列表或宫格组件
+  private scroller: Scroller = new Scroller();
 
-        ListItem() {
-          ArticleTopItem()
-        }
-
-        ForEach(this.articleModel.articleData, (item: ArticleBean) => {
-          ListItem() {
-            ArticleItem({ articleBean: item })
-          }
-          .backgroundColor($r('app.color.white'))
-          .width('100%')
-        }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
-        ListItem() {
-          if (this.articleModel.hasMore) {
-            LoadMoreLayout()
-          } else {
-            NoMoreLayout()
-          }
-        }
-      }
-      .width('100%')
-      .height(Const.FULL_HEIGHT)
-      .divider({
-        color: $r('app.color.dividerColor'),
-        strokeWidth: Const.NewsListConstant_LIST_DIVIDER_STROKE_WIDTH,
-        endMargin: Const.NewsListConstant_LIST_MARGIN_RIGHT
-      })
-      .onScrollIndex((start, end) => {
-        Logger.debug("ArticleList", `onScrollIndex  start:${start}----end:${end}`)
-        if (this.articleModel.hasMore && this.articleModel.isCanLoadMore && end >= this.articleModel.articleData.length + 2) {
-          Logger.debug("ArticleList", `加载更多`)
-          this.articleModel.isCanLoadMore = false;
-          this.loadArticleData(true);
-        }
-      })
-    }
-    .onStateChange((state: RefreshStatus) => {
-      Logger.debug("ArticleList", '刷新state:' + state.toString())
-    })
-    .onRefreshing(() => {
-      this.articleModel.isRefreshing = true;
-      this.loadArticleData(false);
-      Logger.debug("ArticleList", 'onRefreshing:')
+  @Builder
+  ListLayout() {
+    PullToRefresh({
+      data: $data,
+      refreshConfigurator: new PullToRefreshConfigurator().setHasRefresh(true).setHasLoadMore(true),
+      scroller: this.scroller,
+      customList: this.getListView,
+      // 可选项，下拉刷新回调
+      onRefresh: () => {
+        return new Promise<string>((resolve, reject) => {
+          // 模拟网络请求操作，请求网络2秒后得到数据，通知组件，变更列表数据
+          setTimeout(() => {
+            resolve('刷新成功');
+          }, 2000);
+        });
+      },
+      // 可选项，上拉加载更多回调
+      onLoadMore: () => {
+        return new Promise<string>((resolve, reject) => {
+          // 模拟网络请求操作，请求网络2秒后得到数据，通知组件，变更列表数据
+          setTimeout(() => {
+            resolve('');
+          }, 2000);
+        });
+      },
+      customLoad: null,
+      customRefresh: null,
     })
   }
 
-  @Builder FailLayout() {
+  @Builder
+  FailLayout() {
     Image($r('app.media.none'))
       .height(Const.NewsListConstant_NONE_IMAGE_SIZE)
       .width(Const.NewsListConstant_NONE_IMAGE_SIZE)
@@ -148,5 +130,31 @@ export default struct ArticleList {
       .fontSize(Const.NewsListConstant_NONE_TEXT_size)
       .fontColor($r('app.color.fontColor_text3'))
       .margin({ top: Const.NewsListConstant_NONE_TEXT_margin })
+  }
+
+  @Builder
+  private getListView() {
+    List({ scroller: this.scroller }) {
+      ListItem() {
+        BannerItem()
+      }
+
+      ListItem() {
+        ArticleTopItem()
+      }
+
+      ForEach(this.data, (item: ArticleBean) => {
+        ListItem() {
+          ArticleItem({ articleBean: item })
+        }
+        .backgroundColor($r('app.color.white'))
+      }, (item: ArticleBean, index?: number) => JSON.stringify(item) + index)
+    }
+    .divider({
+      color: $r('app.color.dividerColor'),
+      strokeWidth: Const.NewsListConstant_LIST_DIVIDER_STROKE_WIDTH,
+      endMargin: Const.NewsListConstant_LIST_MARGIN_RIGHT
+    })
+    .edgeEffect(EdgeEffect.None) // 必须设置列表为滑动到边缘无效果
   }
 }
