@@ -26,8 +26,10 @@ export default struct TabBar {
   @State tabBarArray: TabBean[] = MainViewModel.getTabList();
   @State currentIndex: number = 0;
   @State currentPage: number = 1;
+  @State isBig: boolean = false;
 
-  @Builder TabBuilder(index: number, tabBean: TabBean) {
+  @Builder
+  TabBuilder(index: number, tabBean: TabBean) {
     Column() {
       Text(this.tabBarArray[index].name)
         .fontWeight(this.currentIndex === index ? Const.TabBars_SELECT_TEXT_FONT_WEIGHT : Const.TabBars_UN_SELECT_TEXT_FONT_WEIGHT)
@@ -49,6 +51,20 @@ export default struct TabBar {
               ArticleList({ currentIndex: $currentIndex })
             } else {
               Text(tabsItem.name)
+                .onClick(() => {
+                  this.isBig = !this.isBig
+                })
+                .backgroundColor('#00ff00')
+                .animation({
+                  duration: 1000,
+                  tempo: 3.0,
+                  delay: 0,
+                  curve: Curve.Linear,
+                  playMode: PlayMode.Normal,
+                  iterations: 1
+                })
+                .height(this.isBig ? 400 : 200)
+
             }
           }
         }

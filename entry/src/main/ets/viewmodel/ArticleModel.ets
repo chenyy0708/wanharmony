@@ -19,9 +19,5 @@ import { ArticleBean, Banner } from './ArticleViewModel';
 
 export default class ArticleModel {
   currentPage: number = 1;
-  pullDownRefreshHeight: number = Const.CUSTOM_LAYOUT_HEIGHT;
   pageState: number = PageState.Loading;
-  hasMore: boolean = true;
-  isRefreshing: boolean = false;
-  isCanLoadMore: boolean = false;
 }

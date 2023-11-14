@@ -18,7 +18,7 @@ import { CommonConstant as Const, PageState } from '../../common/constant/Common
 import CustomRefreshLoadLayout from '../CustomRefreshLoadLayout';
 import NewsViewModel, { ArticleBean, CustomRefreshLoadLayoutClass } from '../../viewmodel/ArticleViewModel';
 import ArticleModel from '../../viewmodel/ArticleModel';
-import { PullToRefresh, PullToRefreshConfigurator } from '@ohos/pulltorefresh';
+import { PullToRefresh } from '@ohos/pulltorefresh';
 import ArticleItem from './ArticleItem';
 import BannerItem from './BannerItem';
 import ArticleTopItem from './ArticleTopItem';
@@ -32,7 +32,7 @@ export default struct ArticleList {
   @Link currentIndex: number;
   @State data: ArticleBean[] = [];
 
-  loadArticleData(isLoadMore: boolean) {
+  loadArticleData(isLoadMore: boolean, callback?: () => void) {
     if (isLoadMore) {
       this.articleModel.currentPage++;
     } else {
@@ -48,18 +48,18 @@ export default struct ArticleList {
         } else {
           this.data = datas;
         }
-        this.articleModel.isRefreshing = false;
-        this.articleModel.isCanLoadMore = true;
       })
       .catch((err: string | Resource) => {
         promptAction.showToast({
           message: err,
           duration: Const.ANIMATION_DURATION
         });
-        this.articleModel.isRefreshing = false;
-        this.articleModel.isCanLoadMore = true;
         this.articleModel.pageState = PageState.Fail;
-      });
+      })
+      .then(() => {
+        callback && callback();
+      })
+    ;
   }
 
   aboutToAppear() {
@@ -84,7 +84,7 @@ export default struct ArticleList {
   @Builder
   LoadingLayout() {
     CustomRefreshLoadLayout({ customRefreshLoadClass: new CustomRefreshLoadLayoutClass(true,
-      $r('app.media.ic_pull_up_load'), $r('app.string.pull_up_load_text'), this.articleModel.pullDownRefreshHeight) })
+      $r('app.media.ic_pull_up_load'), $r('app.string.pull_up_load_text'), Const.CUSTOM_LAYOUT_HEIGHT) })
   }
 
   // 需绑定列表或宫格组件
@@ -94,25 +94,20 @@ export default struct ArticleList {
   ListLayout() {
     PullToRefresh({
       data: $data,
-      refreshConfigurator: new PullToRefreshConfigurator().setHasRefresh(true).setHasLoadMore(true),
       scroller: this.scroller,
       customList: this.getListView,
-      // 可选项，下拉刷新回调
       onRefresh: () => {
         return new Promise<string>((resolve, reject) => {
-          // 模拟网络请求操作，请求网络2秒后得到数据，通知组件，变更列表数据
-          setTimeout(() => {
+          this.loadArticleData(false, () => {
             resolve('刷新成功');
-          }, 2000);
+          });
         });
       },
-      // 可选项，上拉加载更多回调
       onLoadMore: () => {
         return new Promise<string>((resolve, reject) => {
-          // 模拟网络请求操作，请求网络2秒后得到数据，通知组件，变更列表数据
-          setTimeout(() => {
+          this.loadArticleData(true, () => {
             resolve('');
-          }, 2000);
+          });
         });
       },
       customLoad: null,
