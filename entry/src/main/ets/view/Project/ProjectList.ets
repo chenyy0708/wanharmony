@@ -1,9 +1,11 @@
 import promptAction from '@ohos.promptAction';
+import display from '@ohos.display';
 import { CommonConstant } from '../../common/constant/CommonConstant';
 import { fetch } from '../../common/utils/FetchUtil';
 import Logger from '../../common/utils/Logger';
 import { ArticleBean, ResponseResult } from '../../viewmodel/ArticleViewModel';
 import { KnowledgeBean } from '../../viewmodel/KnowledgeViewModel';
+import { GlobalContext } from '../../utils/GlobalContext';
 
 @Component
 export default struct ProjectList {
@@ -36,6 +38,7 @@ export default struct ProjectList {
     }
     .barHeight(50)
     .barPosition(BarPosition.Start)
+    .width('100%')
     .barMode(BarMode.Scrollable)
     .backgroundColor('#FFF')
     .onChange((index: number) => {
@@ -82,6 +85,8 @@ struct ProjectContent {
         ListItem() {
           ProjectItem({ item: item })
         }
+        .padding(10)
+        .height(200)
       }, (item, index) => JSON.stringify(item) + index)
     }
     .divider({
@@ -95,13 +100,18 @@ struct ProjectContent {
 @Component
 struct ProjectItem {
   @Prop item: ArticleBean
+  private deviceDisplay: display.Display = GlobalContext.getContext().getObject('display') as display.Display;
+
+  aboutToAppear() {
+    Logger.debug('ProjectItem',"width:" + this.deviceDisplay.width)
+  }
 
   build() {
     Row() {
       Image(this.item.envelopePic || '').width(100).height(180).objectFit(ImageFit.Cover)
       Column() {
         Text(this.item.title).fontColor('#333').fontSize(14).margin({ top: 10 })
-        Text(this.item.desc).fontColor('#666').fontSize(12).margin({ top: 10, bottom: 10 })
+        Text(this.item.desc).fontColor('#666').fontSize(12).margin({ top: 10, bottom: 10 }).maxLines(2)
         Blank()
         Column() {
           Row() {
@@ -117,9 +127,9 @@ struct ProjectItem {
       .justifyContent(FlexAlign.Start)
       .alignItems(HorizontalAlign.Start)
       .padding({ left: 10 })
+      .height(200)
+      .width(this.deviceDisplay.width - 100 - 20)
     }
-    .padding(10)
-    .height(200)
     .alignItems(VerticalAlign.Top)
   }
 }

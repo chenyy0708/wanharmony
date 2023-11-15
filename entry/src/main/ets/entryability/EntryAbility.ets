@@ -17,12 +17,17 @@ import hilog from '@ohos.hilog';
 import UIAbility from '@ohos.app.ability.UIAbility';
 import Window from '@ohos.window';
 
+import { GlobalContext } from '../utils/GlobalContext';
+import display from '@ohos.display';
+
+
 export default class EntryAbility extends UIAbility {
   onCreate(want, launchParam) {
     hilog.isLoggable(0x0000, 'testTag', hilog.LogLevel.INFO);
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
     hilog.info(0x0000, 'testTag', '%{public}s', 'want param:' + JSON.stringify(want) ?? '');
     hilog.info(0x0000, 'testTag', '%{public}s', 'launchParam:' + JSON.stringify(launchParam) ?? '');
+    GlobalContext.getContext().setObject('abilityWant', want);
   }
 
   onDestroy() {
@@ -30,7 +35,8 @@ export default class EntryAbility extends UIAbility {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
   }
 
-  onWindowStageCreate(windowStage: Window.WindowStage) {
+  async onWindowStageCreate(windowStage: Window.WindowStage) {
+    GlobalContext.getContext().setObject('display', await display.getDefaultDisplaySync());
     // Main window is created, set main page for this ability
     hilog.isLoggable(0x0000, 'testTag', hilog.LogLevel.INFO);
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
