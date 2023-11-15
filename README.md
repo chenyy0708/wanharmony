@@ -12,6 +12,38 @@ ohpm install @ohos/pulltorefresh@2.0.1
 ````
 ## 示例图
 
+<p align="center">
+	<img src="https://raw.githubusercontent.com/chenyy0708/wanharmony/main/screenshot/img.png" alt="Sample"  width="393" height="780">
+	<p align="center">
+		<em>首页</em>
+	</p>
+</p>
 
+<p align="center">
+	<img src="https://github.com/chenyy0708/wanharmony/blob/main/screenshot/img_1.png?raw=true" alt="Sample"  width="393" height="780">
+	<p align="center">
+		<em>知识体系</em>
+	</p>
+</p>
 
+<p align="center">
+	<img src="https://github.com/chenyy0708/wanharmony/blob/main/screenshot/img_2.png?raw=true" alt="Sample"  width="393" height="780">
+	<p align="center">
+		<em>导航</em>
+	</p>
+</p>
+
+<p align="center">
+	<img src="https://github.com/chenyy0708/wanharmony/blob/main/screenshot/img_3.png?raw=true" alt="Sample"  width="393" height="780">
+	<p align="center">
+		<em>项目</em>
+	</p>
+</p>
+
+<p align="center">
+	<img src="https://github.com/chenyy0708/wanharmony/blob/main/screenshot/img_4.png?raw=true" alt="Sample"  width="393" height="780">
+	<p align="center">
+		<em>文章详情</em>
+	</p>
+</p>
 
