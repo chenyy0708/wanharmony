@@ -18,6 +18,7 @@ import MainViewModel, { TabBean } from '../viewmodel/MainViewModel';
 import ArticleList from './Article/ArticleList';
 import KnowledgeList from './Knowledge/KnowledgeList';
 import NavigationList from './Navigation/NavigationList';
+import ProjectList from './Project/ProjectList';
 
 /**
  * The tabBar component.
@@ -55,6 +56,8 @@ export default struct TabBar {
               KnowledgeList()
             } else if (index === 3) {
               NavigationList()
+            } else if (index === 4) {
+              ProjectList()
             } else {
               Text(tabsItem.name)
                 .onClick(() => {
