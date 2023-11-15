@@ -17,6 +17,7 @@ import { CommonConstant as Const } from '../common/constant/CommonConstant';
 import MainViewModel, { TabBean } from '../viewmodel/MainViewModel';
 import ArticleList from './Article/ArticleList';
 import KnowledgeList from './Knowledge/KnowledgeList';
+import NavigationList from './Navigation/NavigationList';
 
 /**
  * The tabBar component.
@@ -52,6 +53,8 @@ export default struct TabBar {
               ArticleList({ currentIndex: $currentIndex })
             } else if (index === 1) {
               KnowledgeList()
+            } else if (index === 3) {
+              NavigationList()
             } else {
               Text(tabsItem.name)
                 .onClick(() => {
